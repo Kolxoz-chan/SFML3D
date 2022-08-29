@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        include/SFML3D/Material.cpp \
         include/SFML3D/Mesh3d.cpp \
         include/SFML3D/View3d.cpp \
         main.cpp
@@ -195,5 +196,6 @@ HEADERS += \
     include/SFML/Window/Window.hpp \
     include/SFML/Window/WindowHandle.hpp \
     include/SFML/Window/WindowStyle.hpp \
+    include/SFML3D/Material.h \
     include/SFML3D/Mesh3d.h \
     include/SFML3D/View3d.h

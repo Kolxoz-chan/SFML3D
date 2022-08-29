@@ -5,6 +5,11 @@ Mesh3D::Mesh3D()
 
 }
 
+void Mesh3D::setMaterial(const Material& material)
+{
+    _material = material;
+}
+
 void Mesh3D::setPosition(sf::Vector3f value)
 {
     _position = value;
@@ -18,11 +23,6 @@ void Mesh3D::setRotation(sf::Vector3f value)
 void Mesh3D::setScale(sf::Vector3f value)
 {
     _scale = value;
-}
-
-void Mesh3D::setColor(sf::Color value)
-{
-    _color = value;
 }
 
 void Mesh3D::move(sf::Vector3f value)
@@ -44,17 +44,80 @@ bool Mesh3D::load(const std::string& path)
 {
     std::ifstream file;
     file.open(path);
-    if(!file.is_open()) return false;
 
-    while(!file.eof())
+    if(file.is_open())
     {
-        std::string line;
-        std::getline(file, line);
+        auto tokenize = [](std::string const &str, const char* delim, std::vector<std::string> &out)
+        {
+          out.clear();
+          char *token = std::strtok(const_cast<char*>(str.c_str()), delim);
+          while (token != nullptr)
+          {
+              out.push_back(token);
+              token = std::strtok(nullptr, delim);
+          }
+        };
 
-        std::cout << line;
+        // Arrays
+        std::vector<sf::Vector3f> v;
+        std::vector<sf::Vector2f> vt;
+        std::vector<sf::Vector3f> vn;
+
+        std::vector<std::string> info;
+        std::vector<std::string> parts;
+        std::string line;
+
+        while(!file.eof())
+        {
+            std::getline(file, line);
+
+            tokenize(line, " ", parts);
+
+            if(!parts.empty())
+            {
+                std::string token = parts[0];
+
+                if(token == "v")
+                {
+                    v.push_back({std::stof(parts[1]), std::stof(parts[2]), std::stof(parts[3])});
+                }
+                else if(token == "vt")
+                {
+                    vt.push_back({std::stof(parts[1]), std::stof(parts[2])});
+                }
+                else if(token == "vn")
+                {
+                    vn.push_back({std::stof(parts[1]), std::stof(parts[2]), std::stof(parts[3])});
+                }
+                else if(token == "f")
+                {
+                    for(int i=1; i<parts.size(); i++)
+                    {
+                        tokenize(parts[i], "/", info);
+
+                        sf::Vector3f vertex = v[stoi(info[0]) - 1];
+                        _buffer.push_back(vertex.x);
+                        _buffer.push_back(vertex.y);
+                        _buffer.push_back(vertex.z);
+
+                        sf::Vector2f tex = vt[stoi(info[1]) - 1];
+                        _tex_coords.push_back(tex.x);
+                        _tex_coords.push_back(tex.y);
+
+                        sf::Vector3f normal = vn[stoi(info[2]) - 1];
+                        _normals.push_back(normal.x);
+                        _normals.push_back(normal.y);
+                        _normals.push_back(normal.z);
+                    }
+                }
+            }
+        }
+        file.close();
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void Mesh3D::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -67,12 +130,13 @@ void Mesh3D::draw(sf::RenderTarget& target, sf::RenderStates states) const
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
+    _material.apply();
+
     glTranslatef(_position.x, _position.y, _position.z);
     glRotatef(_rotation.x, 1, 0, 0);
     glRotatef(_rotation.y, 0, 1, 0);
     glRotatef(_rotation.z, 0, 0, 1);
 
-    glColor3f(_color.r/255.f, _color.g/255.f, _color.b/255.f);
     glVertexPointer(3, GL_FLOAT, 0, _buffer.data());
     glNormalPointer(GL_FLOAT, 0, _normals.data());
     glDrawArrays(GL_TRIANGLES, 0, _buffer.size() / 3);

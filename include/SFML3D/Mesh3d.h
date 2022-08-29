@@ -7,6 +7,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+
+#include <SFML3D/Material.h>
+
 #include <vector>
 #include <math.h>
 #include <iostream>
@@ -18,18 +21,19 @@ class Mesh3D : public sf::Drawable
 {
 protected:
     std::vector<float> _buffer, _normals, _tex_coords;
-    sf::Vector3f _position, _rotation, _scale = sf::Vector3f(0, 0, 0);
-    sf::Color _color = sf::Color::White;
+    sf::Vector3f _position, _rotation, _scale = sf::Vector3f(1, 1, 1);
+    Material _material;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
     Mesh3D();
 
+    void setMaterial(const Material& material);
+
     void setPosition(sf::Vector3f value);
     void setRotation(sf::Vector3f value);
     void setScale(sf::Vector3f value);
-    void setColor(sf::Color value);
 
     void move(sf::Vector3f value);
     void rotate(sf::Vector3f value);

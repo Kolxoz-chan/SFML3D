@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_COLOR_MATERIAL);
+    //glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
     glEnable(GL_DEPTH_TEST);
 
@@ -28,25 +28,26 @@ int main(int argc, char *argv[])
     Vector2f center = {pos.x + size.x/2.f, pos.y + size.y/2.f};
 
     PlaneMesh floor({5, 5});
-    floor.setColor(sf::Color(0, 255, 0));
+    floor.setMaterial(Material(Color::Green, Color::Green, Color::White, Color::White, 0.5));
     floor.setPosition({-2.5, -1, 0});
 
     BoxMesh box2({0.2, 0.2, 0.2});
-    box2.setColor(sf::Color::Red);
+    //box2.setColor(sf::Color::Red);
     box2.setPosition({0, -0.8, -5});
 
     CylinderMesh obj(6, 0.3, 0.3);
     obj.setPosition({0, -0.8, -1});
-    //obj.setRotation({30.f, 0.f, 0.f});
-    obj.setColor(sf::Color(255, 165, 0));
+    //obj.setColor(sf::Color(255, 165, 0));
 
     SphereMesh sphere(0.5, 16, 10);
     sphere.setPosition({0.f, 0.f, 2.f});
-    sphere.setColor(Color::Red);
-
+    sphere.setMaterial(Material(Color::Green, Color::Green, Color::White, Color::White));
+/*
     Mesh3D mesh;
-    cout << mesh.load("test.obj");
-
+    mesh.setPosition({-2.f, -2.f, 0.f});
+    mesh.setColor(Color(90, 0, 0));
+    mesh.load("D:/Projects/build-TestSFML-Desktop_Qt_5_12_12_MSVC2017_64bit-Debug/debug/Rouse.obj");
+*/
     while (window.isOpen())
     {
         Event event;
@@ -72,8 +73,8 @@ int main(int argc, char *argv[])
         sf::Vector3f rotation = view.getRotation();
         float angle = rotation.y * (M_PI/180);
 
-        float dz = cos(angle) * 0.002;
-        float dx = sin(angle) * 0.002;
+        float dz = cos(angle) * 0.02;
+        float dx = sin(angle) * 0.02;
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
         {
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
         window.draw(floor);
         window.draw(sphere);
         window.draw(obj);
+        //window.draw(mesh);
 
         window.display();
     }
