@@ -6,6 +6,7 @@
 
 #include <SFML3D/Mesh3d.h>
 #include <SFML3D/View3d.h>
+#include <SFML3D/Light.h>
 
 using namespace sf;
 using namespace std;
@@ -18,8 +19,6 @@ int main(int argc, char *argv[])
     View3D view(window.getSize());
 
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    //glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
     glEnable(GL_DEPTH_TEST);
 
@@ -28,20 +27,22 @@ int main(int argc, char *argv[])
     Vector2f center = {pos.x + size.x/2.f, pos.y + size.y/2.f};
 
     PlaneMesh floor({5, 5});
-    floor.setMaterial(Material(Color::Green, Color::Green, Color::White, Color::White, 0.5));
+    floor.setMaterial(Material(Color::Green, Color::Green, Color::White, Color::White));
     floor.setPosition({-2.5, -1, 0});
 
     BoxMesh box2({0.2, 0.2, 0.2});
-    //box2.setColor(sf::Color::Red);
+    box2.setMaterial(Material(Color::Blue, Color::Black, Color::Black, Color::White));
     box2.setPosition({0, -0.8, -5});
 
     CylinderMesh obj(6, 0.3, 0.3);
     obj.setPosition({0, -0.8, -1});
-    //obj.setColor(sf::Color(255, 165, 0));
+    obj.setMaterial(Material(Color::Red, Color::Black, Color::Black, Color::White));
 
     SphereMesh sphere(0.5, 16, 10);
     sphere.setPosition({0.f, 0.f, 2.f});
-    sphere.setMaterial(Material(Color::Green, Color::Green, Color::White, Color::White));
+    sphere.setMaterial(Material(Color::Green, Color::Black, Color::Black, Color::White));
+
+    PointLight point(GL_LIGHT0, {0.0f, 1.0f, -0.5f}, 0.0, 1.0, 0.0);
 /*
     Mesh3D mesh;
     mesh.setPosition({-2.f, -2.f, 0.f});
@@ -110,7 +111,6 @@ int main(int argc, char *argv[])
         window.draw(floor);
         window.draw(sphere);
         window.draw(obj);
-        //window.draw(mesh);
 
         window.display();
     }
